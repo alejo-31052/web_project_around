@@ -26,7 +26,7 @@ export  class PopupWithForm extends Popup {
         const submitButton = this.formElement.querySelector('.popup__button') as HTMLButtonElement;
         super.setEventListeners();
 
-        submitButton?.addEventListener('click', (evt)=>{
+        submitButton?.addEventListener('submit', (evt)=>{
             evt.preventDefault();
             const values=this.getInputValues();
             this.handleSubmitEvent(values);
@@ -41,6 +41,6 @@ export  class PopupWithForm extends Popup {
             const input = value as HTMLInputElement
         })
         this.formElement.reset();
-        super.close(popup);
+        super.close();
     }
 }

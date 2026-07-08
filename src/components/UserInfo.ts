@@ -5,8 +5,8 @@ export class UserInfo {
     private userProfession: HTMLElement;
 
     constructor(userName: HTMLElement, userProfession: HTMLElement){
-        this.userName= document.querySelector('.profile__title') as HTMLElement;
-        this.userProfession = document.querySelector('.profile__description') as HTMLElement
+        this.userName= userName;
+        this.userProfession = userProfession;
     }
 
     public getUserInfo(){

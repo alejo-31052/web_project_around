@@ -6,9 +6,8 @@ export class Popup {
     }
 
     private handleEscClose=(event: KeyboardEvent)=>{
-        const popupContainer = document.querySelector(this.popupSelector) as HTMLDivElement;
         if(event.key==='Escape'){
-            this.close(popupContainer);
+            this.close();
         }
     }
     public setEventListeners(){
@@ -18,21 +17,23 @@ export class Popup {
         const closeButton = popupContainer.querySelector('.popup__close') as HTMLButtonElement;
 
         closeButton.addEventListener('click', ()=>{
-            this.close(popupContainer);
+            this.close();
 
         })
         document.addEventListener('keydown', this.handleEscClose);
 
        popupContainer.addEventListener('click', (event) => {
     if (event.target === popupContainer) {
-        this.close(popupContainer);
+        this.close();
     }
 });
     }
-    public open(modal: HTMLElement): void{
-        modal.classList.add('popup_is-opened')
+    public open(): void{
+        const popup = document.querySelector(this.popupSelector) as HTMLElement;
+        popup.classList.add('popup_is-opened')
     }
-    public close(modal: HTMLElement): void{
-    modal.classList.remove('popup_is-opened')
+    public close(): void{
+        const popup = document.querySelector(this.popupSelector) as HTMLElement;
+        popup.classList.remove('popup_is-opened')
     }
 }   

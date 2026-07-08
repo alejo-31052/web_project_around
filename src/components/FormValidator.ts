@@ -13,7 +13,7 @@ export class FormValidator {
     private submitButtonState(validateButton: boolean){
 
         const submitButton = this.formElement.querySelector(this.configObject.submitButtonSelector) as HTMLButtonElement;
-        validateButton===true? submitButton.disabled=true : submitButton.disabled=false;
+        validateButton===true ? submitButton.classList.add('inactiveButtonClass') : submitButton.classList.remove('inactiveButtonClass');
     }
 
     //valida los inputs del form
