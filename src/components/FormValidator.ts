@@ -10,11 +10,16 @@ export class FormValidator {
     }
 
     //maneja el estado del boton solamente
-    private submitButtonState(validateButton: boolean){
-
-        const submitButton = this.formElement.querySelector(this.configObject.submitButtonSelector) as HTMLButtonElement;
-        validateButton===true ? submitButton.classList.add('inactiveButtonClass') : submitButton.classList.remove('inactiveButtonClass');
+  private submitButtonState(validateButton: boolean): void {
+    const submitButton = this.formElement.querySelector(this.configObject.submitButtonSelector) as HTMLButtonElement;
+    if (validateButton) {
+        submitButton.disabled = true;
+        submitButton.classList.add(this.configObject.inactiveButtonClass);
+    } else {
+        submitButton.disabled = false;
+        submitButton.classList.remove(this.configObject.inactiveButtonClass);
     }
+}
 
     //valida los inputs del form
     private validateInput(){

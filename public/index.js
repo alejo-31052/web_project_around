@@ -36,10 +36,9 @@ const editFormPopup = new PopupWithForm("#edit-popup", editFormElement, (values)
 });
 //Eventlisteners de los botones para editar/agregar imagen
 editButton.addEventListener("click", () => {
-    editFormPopup.open(formPopupDiv);
+    editFormPopup.open();
     const firstInput = editFormElement.querySelector('.popup__input_type_name');
     const secondInput = editFormElement.querySelector('.popup__input_type_description');
-    console.log(userNameTitle.textContent);
     firstInput.value = userNameTitle.textContent;
     secondInput.value = userProfessionTitle.textContent;
 });
@@ -52,7 +51,6 @@ editFormValidation.resetValidation();
 const newCard = new PopupWithForm("#new-card-popup", newCardForm, (values) => {
     const card = new Card(values, cardTemplate, () => {
         const imagePopup = new PopupWithImage("#image-popup", values.link, values["place-name"]);
-        console.log(values["place-name"]);
         imagePopup.setEventListeners();
         imagePopup.open();
     });
@@ -61,9 +59,11 @@ const newCard = new PopupWithForm("#new-card-popup", newCardForm, (values) => {
     cardContainer.prepend(renderedCard);
 });
 newCardButton.addEventListener("click", () => {
-    newCard.open(newCardPopup);
+    newCard.open();
 });
 newCard.setEventListeners();
 const newCardFormValidator = new FormValidator(defaultFormConfig, newCardForm);
 newCardFormValidator.enableValidation();
 newCardFormValidator.resetValidation();
+// document.querySelector('.profile__title') as HTMLElement
+// document.querySelector('.profile__description') as HTMLElement

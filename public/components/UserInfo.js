@@ -2,8 +2,8 @@ export class UserInfo {
     userName;
     userProfession;
     constructor(userName, userProfession) {
-        this.userName = document.querySelector('.profile__title');
-        this.userProfession = document.querySelector('.profile__description');
+        this.userName = userName;
+        this.userProfession = userProfession;
     }
     getUserInfo() {
         const userInformation = {

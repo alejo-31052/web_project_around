@@ -4,28 +4,29 @@ export class Popup {
         this.popupSelector = popupSelector;
     }
     handleEscClose = (event) => {
-        const popupContainer = document.querySelector(this.popupSelector);
         if (event.key === 'Escape') {
-            this.close(popupContainer);
+            this.close();
         }
     };
     setEventListeners() {
         const popupContainer = document.querySelector(this.popupSelector);
         const closeButton = popupContainer.querySelector('.popup__close');
         closeButton.addEventListener('click', () => {
-            this.close(popupContainer);
+            this.close();
         });
         document.addEventListener('keydown', this.handleEscClose);
         popupContainer.addEventListener('click', (event) => {
             if (event.target === popupContainer) {
-                this.close(popupContainer);
+                this.close();
             }
         });
     }
-    open(modal) {
-        modal.classList.add('popup_is-opened');
+    open() {
+        const popup = document.querySelector(this.popupSelector);
+        popup.classList.add('popup_is-opened');
     }
-    close(modal) {
-        modal.classList.remove('popup_is-opened');
+    close() {
+        const popup = document.querySelector(this.popupSelector);
+        popup.classList.remove('popup_is-opened');
     }
 }
