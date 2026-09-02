@@ -16,5 +16,15 @@ export interface UserInfoTypes {
 export interface InitialCardsType {
     name: string;
     link: string;
+    _id: string;
+    isLiked: boolean;
+}
+
+export interface user {
+    about: string,
+avatar: string,
+name: string,
+_id: string
+
 }
 

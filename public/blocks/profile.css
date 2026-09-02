@@ -37,6 +37,10 @@
   max-width: 373px;
 }
 
+.profile__image-container{
+  display: flex;
+  position: relative;
+}
 .profile__image {
   width: 120px;
   height: 120px;
@@ -44,6 +48,21 @@
   object-fit: cover;
   background-position: center;
   margin-right: 29px;
+}
+.profile__image-edit-button{
+  width: 25px;
+  height: 25px;
+  position: absolute;
+  top: 41%;
+  left: 35%;
+  display: none;
+}
+
+.profile__image-container:hover .profile__image{
+  opacity: 40%;
+}
+.profile__image-container:hover .profile__image-edit-button{
+  display: block ;
 }
 
 .profile__add-button {

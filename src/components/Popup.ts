@@ -36,4 +36,6 @@ export class Popup {
         const popup = document.querySelector(this.popupSelector) as HTMLElement;
         popup.classList.remove('popup_is-opened')
     }
+
+    
 }   
