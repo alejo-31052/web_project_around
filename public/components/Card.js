@@ -18,7 +18,7 @@ export class Card {
         this.handleLikeButton = handleLikeButton;
         this.handleDeleteCard = handleDeleteCard;
     }
-    cardCreation() {
+    cardCreation(currentUserId, creatorId) {
         const card = this.cardTemplate.content.querySelector('.card')?.cloneNode(true);
         const cardName = card.querySelector('.card__title');
         const cardImage = card.querySelector('.card__image');
@@ -31,7 +31,7 @@ export class Card {
         this.unlike();
         this.PoPupImage();
         this.likeButtonStatus();
-        this.deleteCard();
+        this.deleteCard(currentUserId, creatorId);
         return card;
     }
     PoPupImage() {
@@ -63,11 +63,16 @@ export class Card {
             cardLikeButton.classList.remove('card__like-button_is-active');
         }
     }
-    deleteCard() {
+    deleteCard(currentUserId, creatorId) {
         const deleteButton = this.element.querySelector('.card__delete-button');
-        deleteButton.addEventListener('click', () => {
-            this.handleDeleteCard();
-        });
+        if (currentUserId !== creatorId) {
+            deleteButton.disabled = true;
+        }
+        else {
+            deleteButton.addEventListener('click', () => {
+                this.handleDeleteCard();
+            });
+        }
     }
     cardRemoval() {
         this.element.remove();

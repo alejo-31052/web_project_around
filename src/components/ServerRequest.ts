@@ -3,20 +3,18 @@ import type { InitialCardsType } from "../types/Types.js";
 import type { Card } from "./Card.js";
 
 export class Api {
-  url: string;
-  method: string;
+  private url: string;
+  private headers: Record <string, string>;
 
-  constructor() {
-    ((this.url = ''), (this.method = ""));
+  constructor({url, headers}: {url: string, headers: Record <string, string>}) {
+    this.url = url;
+    this.headers=headers;
   }
 
-  async getUserInfo(urlMethod: string): Promise<user> {
-    this.url=urlMethod;
+  async getUserInfo(): Promise<user> {
     try {
-      const res: Response = await fetch(this.url, {
-        headers: {
-          'authorization': "25cd8390-a38b-4c26-9455-c3a4437cd5d2",
-        },
+      const res: Response = await fetch(`${this.url}users/me`, {
+        headers: this.headers,
       });
       if (res.ok) {
         const data = await res.json();
@@ -30,13 +28,10 @@ export class Api {
     }
   }
 
-  async getCards(urlMethod: string): Promise<InitialCardsType[]> {
-    this.url=urlMethod;
+  async getCards(): Promise<InitialCardsType[]> {
     try {
-      const res: Response = await fetch(this.url, {
-        headers: {
-          'authorization': "25cd8390-a38b-4c26-9455-c3a4437cd5d2",
-        },
+      const res: Response = await fetch(`${this.url}cards/`, {
+        headers: this.headers,
       });
       if (res.ok) {
         const imgInfo: InitialCardsType[] = [];
@@ -47,6 +42,8 @@ export class Api {
             link: card.link,
             _id: card._id,
             isLiked: card.isLiked,
+            owner: card.owner
+            
           });
         });
         return imgInfo;
@@ -59,17 +56,12 @@ export class Api {
     }
   }
 
-  async editProfile(name: string, about: string, urlMethod: string): Promise<any> {
-    this.method = "PATCH";
-    this.url=urlMethod;
+  async editProfile(name: string, about: string): Promise<any> {
 
     try {
-      const res: Response = await fetch(this.url, {
-        method: this.method,
-        headers: {
-          "Content-type": "application/json",
-          'authorization': "25cd8390-a38b-4c26-9455-c3a4437cd5d2",
-        },
+      const res: Response = await fetch(`${this.url}users/me`, {
+        method: 'PATCH',
+        headers: this.headers,
         body: JSON.stringify({
           name: name,
           about: about,
@@ -87,17 +79,11 @@ export class Api {
     }
   }
 
-  async addNewCard(name: string, link: string, urlMethod: string): Promise<any> {
-    this.url = urlMethod;
-    this.method = "POST";
-
+  async addNewCard(name: string, link: string): Promise<any> {
     try {
-      const res: Response = await fetch(this.url, {
-        method: this.method,
-        headers: {
-          "Content-type": "application/json",
-          'authorization': "25cd8390-a38b-4c26-9455-c3a4437cd5d2",
-        },
+      const res: Response = await fetch(`${this.url}cards/`, {
+        method: 'POST',
+        headers: this.headers,
         body: JSON.stringify({
           name: name,
           link: link,
@@ -115,17 +101,12 @@ export class Api {
     }
   }
 
-  async isLiked(isLiked: boolean, urlMethod: string): Promise<boolean> {
-    this.url = urlMethod;
-
+  async isLiked(isLiked: boolean, url: string): Promise<boolean> {
     try {
       if (isLiked) {
-        const res: Response = await fetch(this.url, {
+        const res: Response = await fetch(`${this.url}cards/${url}/likes`, {
           method: "DELETE",
-          headers: {
-            "Content-type": "application/json",
-            'authorization': "25cd8390-a38b-4c26-9455-c3a4437cd5d2",
-          },
+          headers: this.headers,
         });
         if (res.ok) {
           const data = await res.json();
@@ -134,12 +115,9 @@ export class Api {
           throw new Error(`Error ${res.status}`);
         }
       } else {
-        const res: Response = await fetch(this.url, {
+        const res: Response = await fetch(`${this.url}cards/${url}/likes`, {
           method: "PUT",
-          headers: {
-            "Content-type": "application/json",
-            'authorization': "25cd8390-a38b-4c26-9455-c3a4437cd5d2",
-          },
+          headers: this.headers,
         });
         if (res.ok) {
           const data = await res.json();
@@ -152,15 +130,13 @@ export class Api {
       console.error(err);
       throw err;
     }
-  }
-  async deleteCard(card: Card, urlMethod: string ): Promise<void>{
-    this.url= urlMethod;
+  };
+
+  async deleteCard(card: Card, id: string ): Promise<void>{
     try{
-              const res = await fetch(this.url,{
+              const res = await fetch(`${this.url}cards/${id}`,{
                 method:  'DELETE',
-                headers: {
-                  authorization: "25cd8390-a38b-4c26-9455-c3a4437cd5d2",
-                }
+                headers: this.headers
               }
                 
               )
@@ -177,15 +153,11 @@ export class Api {
 
   }
 }
-async ProfilePictureRequest(avatar: string, urlMethod: string): Promise<void> {
-  this.url=urlMethod;
+async ProfilePictureRequest(avatar: string): Promise<void> {
   try{
-  const res = await fetch(this.url, {
+  const res = await fetch(`${this.url}users/me/avatar`, {
       method: 'PATCH',
-      headers: {
-            'authorization': "25cd8390-a38b-4c26-9455-c3a4437cd5d2",
-            'Content-Type': 'application/json'
-          },
+      headers: this.headers,
           body: JSON.stringify({
             'avatar': avatar
           })

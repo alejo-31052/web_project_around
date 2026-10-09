@@ -17,19 +17,27 @@ import { PopupWithConfirmation } from './components/PopupWithConfirmation.js';
 import { editPhotoForm } from './utils/Constants.js';
 import { editPhotoContainer } from "./utils/Constants.js";
 const cardTemplate = document.querySelector("#cards__template");
+const api = new Api({
+    url: 'https://around-api.es.tripleten-services.com/v1/',
+    headers: {
+        authorization: '25cd8390-a38b-4c26-9455-c3a4437cd5d2',
+        'Content-Type': 'application/json',
+    },
+});
+let currentUserId;
 //Llamada de la informacion del usuario desde el servidor.
 const renderUser = async () => {
-    const userApi = new Api();
-    const userData = await userApi.getUserInfo('https://around-api.es.tripleten-services.com/v1/users/me');
+    const userData = await api.getUserInfo();
     userNameTitle.textContent = userData.name;
     userProfessionTitle.textContent = userData.about;
     userPicture.src = userData.avatar;
+    currentUserId = userData._id;
+    console.log(currentUserId);
 };
 renderUser();
 //Llamada a las tarjetas del usuario.
 const renderCards = async () => {
-    const cardApi = new Api();
-    const initialCards = await cardApi.getCards('https://around-api.es.tripleten-services.com/v1/cards/');
+    const initialCards = await api.getCards();
     const cards = new Section({
         items: initialCards,
         renderer: (item) => {
@@ -38,19 +46,17 @@ const renderCards = async () => {
                 imagePopup.setEventListeners();
                 imagePopup.open();
             }, async (isLiked) => {
-                const likeStatus = new Api();
-                const confirmStatus = await likeStatus.isLiked(isLiked, `https://around-api.es.tripleten-services.com/v1/cards/${item._id}/likes`);
+                const confirmStatus = await api.isLiked(isLiked, item._id);
                 return confirmStatus;
             }, () => {
-                const request = new Api();
                 const deletePopup = new PopupWithConfirmation('#delete-confirmation-popup', async () => {
-                    const deleteRequest = await request.deleteCard(card, `https://around-api.es.tripleten-services.com/v1/cards/${item._id}`);
+                    const deleteRequest = await api.deleteCard(card, item._id);
                 });
                 deletePopup.open();
                 deletePopup.setEventListeners();
                 deletePopup.confirmCardElimination();
             });
-            const cardElement = card.cardCreation();
+            const cardElement = card.cardCreation(currentUserId, item.owner);
             cards.addItem(cardElement);
         },
     }, ".cards__list");
@@ -62,8 +68,7 @@ const userProfileInfo = new UserInfo(userNameTitle, userProfessionTitle);
 //Edit form
 const editFormPopup = new PopupWithForm("#edit-popup", editFormElement, async (values) => {
     const { name, description } = values;
-    const requestChange = new Api();
-    const data = await requestChange.editProfile(name, description, 'https://around-api.es.tripleten-services.com/v1/users/me');
+    const data = await api.editProfile(name, description);
     userProfileInfo.setUserInfo(data.name, data.about);
 });
 //Eventlisteners de los botones para editar/agregar imagen
@@ -83,20 +88,17 @@ editFormValidation.resetValidation();
 const newCard = new PopupWithForm("#new-card-popup", newCardForm, async (values) => {
     const { name, link } = values;
     //proceso asincrono
-    const sendNewCard = new Api();
-    const cardCreation = await sendNewCard.addNewCard(name, link, 'https://around-api.es.tripleten-services.com/v1/cards/');
+    const cardCreation = await api.addNewCard(name, link);
     const card = new Card(cardCreation, cardTemplate, () => {
         const imagePopup = new PopupWithImage("#image-popup", cardCreation.link, cardCreation.name);
         imagePopup.setEventListeners();
         imagePopup.open();
     }, async (isLiked) => {
-        const likeStatus = new Api();
-        const confirmStatus = await likeStatus.isLiked(isLiked, `https://around-api.es.tripleten-services.com/v1/cards/${cardCreation._id}/likes`);
+        const confirmStatus = await api.isLiked(isLiked, cardCreation._id);
         return confirmStatus;
     }, () => {
-        const request = new Api();
         const deletePopup = new PopupWithConfirmation('#delete-confirmation-popup', async () => {
-            const deleteRequest = await request.deleteCard(card, `https://around-api.es.tripleten-services.com/v1/cards/${cardCreation._id}`);
+            const deleteRequest = await api.deleteCard(card, `https://around-api.es.tripleten-services.com/v1/cards/${cardCreation._id}`);
         });
         //abrir el popup de confirmacion
         deletePopup.open();
@@ -106,7 +108,7 @@ const newCard = new PopupWithForm("#new-card-popup", newCardForm, async (values)
         deletePopup.confirmCardElimination();
     });
     const cardContainer = document.querySelector(".cards__list");
-    const renderedCard = card.cardCreation();
+    const renderedCard = card.cardCreation(currentUserId, cardCreation.owner);
     cardContainer.prepend(renderedCard);
 });
 newCardButton.addEventListener("click", () => {
@@ -119,8 +121,7 @@ newCardFormValidator.resetValidation();
 // Cambio de foto de perfil
 const changeProfilePicture = new PopupWithForm('#change-profile-picture-popup', editPhotoForm, async (values) => {
     const { name: avatar } = values;
-    const changePictureRequest = new Api();
-    const request = await changePictureRequest.ProfilePictureRequest(avatar, 'https://around-api.es.tripleten-services.com/v1/users/me/avatar');
+    const request = await api.ProfilePictureRequest(avatar);
     userPicture.src = avatar;
 });
 editPhotoContainer.addEventListener('click', () => {
@@ -130,3 +131,14 @@ changeProfilePicture.setEventListeners();
 const changeProfilePictureValidation = new FormValidator(defaultFormConfig, editPhotoForm);
 changeProfilePictureValidation.enableValidation();
 changeProfilePictureValidation.resetValidation();
+const prueba = async () => {
+    const res = await fetch('https://around-api.es.tripleten-services.com/v1/cards', {
+        headers: {
+            authorization: '25cd8390-a38b-4c26-9455-c3a4437cd5d2',
+            'Content-Type': 'application/json',
+        }
+    });
+    const data = await res.json();
+    console.log(data);
+};
+prueba();

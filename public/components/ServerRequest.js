@@ -1,16 +1,14 @@
 export class Api {
     url;
-    method;
-    constructor() {
-        ((this.url = ''), (this.method = ""));
+    headers;
+    constructor({ url, headers }) {
+        this.url = url;
+        this.headers = headers;
     }
-    async getUserInfo(urlMethod) {
-        this.url = urlMethod;
+    async getUserInfo() {
         try {
-            const res = await fetch(this.url, {
-                headers: {
-                    'authorization': "25cd8390-a38b-4c26-9455-c3a4437cd5d2",
-                },
+            const res = await fetch(`${this.url}users/me`, {
+                headers: this.headers,
             });
             if (res.ok) {
                 const data = await res.json();
@@ -25,13 +23,10 @@ export class Api {
             throw err;
         }
     }
-    async getCards(urlMethod) {
-        this.url = urlMethod;
+    async getCards() {
         try {
-            const res = await fetch(this.url, {
-                headers: {
-                    'authorization': "25cd8390-a38b-4c26-9455-c3a4437cd5d2",
-                },
+            const res = await fetch(`${this.url}cards/`, {
+                headers: this.headers,
             });
             if (res.ok) {
                 const imgInfo = [];
@@ -42,6 +37,7 @@ export class Api {
                         link: card.link,
                         _id: card._id,
                         isLiked: card.isLiked,
+                        owner: card.owner
                     });
                 });
                 return imgInfo;
@@ -55,16 +51,11 @@ export class Api {
             throw err;
         }
     }
-    async editProfile(name, about, urlMethod) {
-        this.method = "PATCH";
-        this.url = urlMethod;
+    async editProfile(name, about) {
         try {
-            const res = await fetch(this.url, {
-                method: this.method,
-                headers: {
-                    "Content-type": "application/json",
-                    'authorization': "25cd8390-a38b-4c26-9455-c3a4437cd5d2",
-                },
+            const res = await fetch(`${this.url}users/me`, {
+                method: 'PATCH',
+                headers: this.headers,
                 body: JSON.stringify({
                     name: name,
                     about: about,
@@ -82,16 +73,11 @@ export class Api {
             throw err;
         }
     }
-    async addNewCard(name, link, urlMethod) {
-        this.url = urlMethod;
-        this.method = "POST";
+    async addNewCard(name, link) {
         try {
-            const res = await fetch(this.url, {
-                method: this.method,
-                headers: {
-                    "Content-type": "application/json",
-                    'authorization': "25cd8390-a38b-4c26-9455-c3a4437cd5d2",
-                },
+            const res = await fetch(`${this.url}cards/`, {
+                method: 'POST',
+                headers: this.headers,
                 body: JSON.stringify({
                     name: name,
                     link: link,
@@ -110,16 +96,12 @@ export class Api {
             throw err;
         }
     }
-    async isLiked(isLiked, urlMethod) {
-        this.url = urlMethod;
+    async isLiked(isLiked, url) {
         try {
             if (isLiked) {
-                const res = await fetch(this.url, {
+                const res = await fetch(`${this.url}cards/${url}/likes`, {
                     method: "DELETE",
-                    headers: {
-                        "Content-type": "application/json",
-                        'authorization': "25cd8390-a38b-4c26-9455-c3a4437cd5d2",
-                    },
+                    headers: this.headers,
                 });
                 if (res.ok) {
                     const data = await res.json();
@@ -130,12 +112,9 @@ export class Api {
                 }
             }
             else {
-                const res = await fetch(this.url, {
+                const res = await fetch(`${this.url}cards/${url}/likes`, {
                     method: "PUT",
-                    headers: {
-                        "Content-type": "application/json",
-                        'authorization': "25cd8390-a38b-4c26-9455-c3a4437cd5d2",
-                    },
+                    headers: this.headers,
                 });
                 if (res.ok) {
                     const data = await res.json();
@@ -151,14 +130,12 @@ export class Api {
             throw err;
         }
     }
-    async deleteCard(card, urlMethod) {
-        this.url = urlMethod;
+    ;
+    async deleteCard(card, id) {
         try {
-            const res = await fetch(this.url, {
+            const res = await fetch(`${this.url}cards/${id}`, {
                 method: 'DELETE',
-                headers: {
-                    authorization: "25cd8390-a38b-4c26-9455-c3a4437cd5d2",
-                }
+                headers: this.headers
             });
             if (res.ok) {
                 card.cardRemoval();
@@ -172,15 +149,11 @@ export class Api {
             throw err;
         }
     }
-    async ProfilePictureRequest(avatar, urlMethod) {
-        this.url = urlMethod;
+    async ProfilePictureRequest(avatar) {
         try {
-            const res = await fetch(this.url, {
+            const res = await fetch(`${this.url}users/me/avatar`, {
                 method: 'PATCH',
-                headers: {
-                    'authorization': "25cd8390-a38b-4c26-9455-c3a4437cd5d2",
-                    'Content-Type': 'application/json'
-                },
+                headers: this.headers,
                 body: JSON.stringify({
                     'avatar': avatar
                 })

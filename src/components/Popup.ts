@@ -29,10 +29,12 @@ export class Popup {
 });
     }
     public open(): void{
+        document.addEventListener('keydown', this.handleEscClose);
         const popup = document.querySelector(this.popupSelector) as HTMLElement;
         popup.classList.add('popup_is-opened')
     }
     public close(): void{
+        document.removeEventListener('keydown', this.handleEscClose);
         const popup = document.querySelector(this.popupSelector) as HTMLElement;
         popup.classList.remove('popup_is-opened')
     }

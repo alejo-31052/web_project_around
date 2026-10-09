@@ -22,10 +22,12 @@ export class Popup {
         });
     }
     open() {
+        document.addEventListener('keydown', this.handleEscClose);
         const popup = document.querySelector(this.popupSelector);
         popup.classList.add('popup_is-opened');
     }
     close() {
+        document.removeEventListener('keydown', this.handleEscClose);
         const popup = document.querySelector(this.popupSelector);
         popup.classList.remove('popup_is-opened');
     }

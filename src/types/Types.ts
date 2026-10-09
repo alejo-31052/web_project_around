@@ -18,6 +18,7 @@ export interface InitialCardsType {
     link: string;
     _id: string;
     isLiked: boolean;
+    owner: string;
 }
 
 export interface user {

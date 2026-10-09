@@ -27,7 +27,7 @@ export class Card {
         this.handleDeleteCard=handleDeleteCard;
     }
 
-    public cardCreation(): HTMLElement{
+    public cardCreation(currentUserId: string, creatorId: string): HTMLElement{
         const card = this.cardTemplate.content.querySelector('.card')?.cloneNode(true) as HTMLElement;
         const cardName = card.querySelector('.card__title') as HTMLElement;
         const cardImage = card.querySelector('.card__image') as HTMLImageElement;
@@ -42,7 +42,7 @@ export class Card {
         this.unlike();
         this.PoPupImage();
         this.likeButtonStatus();
-        this.deleteCard();
+        this.deleteCard(currentUserId, creatorId );
 
         return card;
     }
@@ -80,11 +80,16 @@ export class Card {
             cardLikeButton.classList.remove('card__like-button_is-active')
         }
     }
-    private deleteCard(): void{
+    private deleteCard(currentUserId: string, creatorId: string): void{
         const deleteButton = this.element.querySelector('.card__delete-button') as HTMLButtonElement;
-        deleteButton.addEventListener('click',()=>{
+        if(currentUserId !== creatorId ){
+            deleteButton.disabled=true;
+        } else {
+            deleteButton.addEventListener('click',()=>{
              this.handleDeleteCard()
         })
+        }
+        
     }
 
     public cardRemoval(): void {
