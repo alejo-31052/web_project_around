@@ -13,7 +13,7 @@ import { userProfessionTitle } from "./utils/Constants.js";
 import { FormValidator } from "./components/FormValidator.js";
 import { defaultFormConfig } from "./utils/Constants.js";
 import { userPicture } from "./utils/Constants.js";
-import { Api } from "./components/ServerRequest.js";
+import { Api } from "./components/Api.js";
 import { PopupWithConfirmation } from "./components/PopupWithConfirmation.js";
 import { editPhotoForm } from "./utils/Constants.js";
 import { editPhotoContainer } from "./utils/Constants.js";
@@ -71,7 +71,9 @@ const loadInitialInfo = async () => {
 
             () => {
               deletePopup.setDeleteHandler(async () => {
-                await api.deleteCard(card, item._id);
+                await api.deleteCard(item._id);
+                card.cardRemoval();
+                
               });
 
               deletePopup.open();
@@ -158,7 +160,8 @@ const newCard = new PopupWithForm(
      
 () => {
   deletePopup.setDeleteHandler(async () => {
-    await api.deleteCard(card, cardCreation._id);
+    await api.deleteCard(cardCreation._id);
+    card.cardRemoval()
   });
 
   deletePopup.open();

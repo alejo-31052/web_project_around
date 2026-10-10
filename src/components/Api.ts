@@ -132,7 +132,7 @@ export class Api {
     }
   };
 
-  async deleteCard(card: Card, id: string ): Promise<void>{
+  async deleteCard(id: string ): Promise<void>{
     try{
               const res = await fetch(`${this.url}cards/${id}`,{
                 method:  'DELETE',
@@ -140,11 +140,9 @@ export class Api {
               }
                 
               )
-              if(res.ok){
-                card.cardRemoval()
+              if(!res.ok){
+               throw new Error(`Error ${res.status}`)
 
-              } else{
-              throw new Error(`Error ${res.status}`)
               }
             }
             catch(err){
