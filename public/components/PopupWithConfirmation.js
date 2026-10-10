@@ -3,20 +3,26 @@ export class PopupWithConfirmation extends Popup {
     cardPopup;
     deleteConfirmationButton;
     originalButtonText = "";
-    handleDeleteRequest;
-    constructor(popupSelector, handleDeleteRequest) {
-        (super(popupSelector), (this.handleDeleteRequest = handleDeleteRequest));
+    handleDeleteRequest = async () => { };
+    constructor(popupSelector) {
+        super(popupSelector);
         const popup = document.querySelector(this.popupSelector);
         this.cardPopup = popup.querySelector(".popup__content");
         this.deleteConfirmationButton = this.cardPopup.querySelector(".popup__button");
-        this.originalButtonText = this.deleteConfirmationButton.textContent || "";
+        this.originalButtonText =
+            this.deleteConfirmationButton.textContent || "";
+    }
+    setDeleteHandler(handler) {
+        this.handleDeleteRequest = handler;
     }
     setLoading(loading) {
         if (loading) {
             this.deleteConfirmationButton.textContent = "Guardando...";
+            this.deleteConfirmationButton.disabled = true;
         }
         else {
             this.deleteConfirmationButton.textContent = this.originalButtonText;
+            this.deleteConfirmationButton.disabled = false;
         }
     }
     confirmCardElimination() {
@@ -26,8 +32,8 @@ export class PopupWithConfirmation extends Popup {
                 await this.handleDeleteRequest();
                 this.close();
             }
-            catch {
-                console.error("error");
+            catch (error) {
+                console.error("Error al eliminar la tarjeta:", error);
             }
             finally {
                 this.setLoading(false);

@@ -13,56 +13,58 @@ import { FormValidator } from "./components/FormValidator.js";
 import { defaultFormConfig } from "./utils/Constants.js";
 import { userPicture } from "./utils/Constants.js";
 import { Api } from "./components/ServerRequest.js";
-import { PopupWithConfirmation } from './components/PopupWithConfirmation.js';
-import { editPhotoForm } from './utils/Constants.js';
+import { PopupWithConfirmation } from "./components/PopupWithConfirmation.js";
+import { editPhotoForm } from "./utils/Constants.js";
 import { editPhotoContainer } from "./utils/Constants.js";
 const cardTemplate = document.querySelector("#cards__template");
 const api = new Api({
-    url: 'https://around-api.es.tripleten-services.com/v1/',
+    url: "https://around-api.es.tripleten-services.com/v1/",
     headers: {
-        authorization: '25cd8390-a38b-4c26-9455-c3a4437cd5d2',
-        'Content-Type': 'application/json',
+        authorization: "25cd8390-a38b-4c26-9455-c3a4437cd5d2",
+        "Content-Type": "application/json",
     },
 });
+const deletePopup = new PopupWithConfirmation("#delete-confirmation-popup");
+deletePopup.setEventListeners();
+deletePopup.confirmCardElimination();
 let currentUserId;
-//Llamada de la informacion del usuario desde el servidor.
-const renderUser = async () => {
-    const userData = await api.getUserInfo();
-    userNameTitle.textContent = userData.name;
-    userProfessionTitle.textContent = userData.about;
-    userPicture.src = userData.avatar;
-    currentUserId = userData._id;
-    console.log(currentUserId);
-};
-renderUser();
-//Llamada a las tarjetas del usuario.
-const renderCards = async () => {
-    const initialCards = await api.getCards();
-    const cards = new Section({
-        items: initialCards,
-        renderer: (item) => {
-            const card = new Card(item, cardTemplate, () => {
-                const imagePopup = new PopupWithImage("#image-popup", item.link, item.name);
-                imagePopup.setEventListeners();
-                imagePopup.open();
-            }, async (isLiked) => {
-                const confirmStatus = await api.isLiked(isLiked, item._id);
-                return confirmStatus;
-            }, () => {
-                const deletePopup = new PopupWithConfirmation('#delete-confirmation-popup', async () => {
-                    const deleteRequest = await api.deleteCard(card, item._id);
+const loadInitialInfo = async () => {
+    try {
+        const [userData, initialCards] = await Promise.all([
+            api.getUserInfo(),
+            api.getCards(),
+        ]);
+        userNameTitle.textContent = userData.name;
+        userProfessionTitle.textContent = userData.about;
+        userPicture.src = userData.avatar;
+        currentUserId = userData._id;
+        const cards = new Section({
+            items: initialCards,
+            renderer: (item) => {
+                const card = new Card(item, cardTemplate, () => {
+                    const imagePopup = new PopupWithImage("#image-popup", item.link, item.name);
+                    imagePopup.setEventListeners();
+                    imagePopup.open();
+                }, async (isLiked) => {
+                    const confirmStatus = await api.isLiked(isLiked, item._id);
+                    return confirmStatus;
+                }, () => {
+                    deletePopup.setDeleteHandler(async () => {
+                        await api.deleteCard(card, item._id);
+                    });
+                    deletePopup.open();
                 });
-                deletePopup.open();
-                deletePopup.setEventListeners();
-                deletePopup.confirmCardElimination();
-            });
-            const cardElement = card.cardCreation(currentUserId, item.owner);
-            cards.addItem(cardElement);
-        },
-    }, ".cards__list");
-    cards.renderItems();
+                const cardElement = card.cardCreation(currentUserId, item.owner);
+                cards.addItem(cardElement);
+            },
+        }, ".cards__list");
+        cards.renderItems();
+    }
+    catch {
+        console.error("Error al cargar la informacion del servidor.");
+    }
 };
-renderCards();
+loadInitialInfo();
 const userProfileInfo = new UserInfo(userNameTitle, userProfessionTitle);
 // Forms popup
 //Edit form
@@ -74,8 +76,8 @@ const editFormPopup = new PopupWithForm("#edit-popup", editFormElement, async (v
 //Eventlisteners de los botones para editar/agregar imagen
 editButton.addEventListener("click", () => {
     editFormPopup.open();
-    const firstInput = editFormElement.querySelector('.popup__input_type_name');
-    const secondInput = editFormElement.querySelector('.popup__input_type_description');
+    const firstInput = editFormElement.querySelector(".popup__input_type_name");
+    const secondInput = editFormElement.querySelector(".popup__input_type_description");
     firstInput.value = userNameTitle.textContent;
     secondInput.value = userProfessionTitle.textContent;
 });
@@ -97,15 +99,10 @@ const newCard = new PopupWithForm("#new-card-popup", newCardForm, async (values)
         const confirmStatus = await api.isLiked(isLiked, cardCreation._id);
         return confirmStatus;
     }, () => {
-        const deletePopup = new PopupWithConfirmation('#delete-confirmation-popup', async () => {
-            const deleteRequest = await api.deleteCard(card, `https://around-api.es.tripleten-services.com/v1/cards/${cardCreation._id}`);
+        deletePopup.setDeleteHandler(async () => {
+            await api.deleteCard(card, cardCreation._id);
         });
-        //abrir el popup de confirmacion
         deletePopup.open();
-        // para identificar si presionan escape o cierran el popup
-        deletePopup.setEventListeners();
-        //solicitud al servidor para borrarlo cuando le dan click al boton de confirmar.
-        deletePopup.confirmCardElimination();
     });
     const cardContainer = document.querySelector(".cards__list");
     const renderedCard = card.cardCreation(currentUserId, cardCreation.owner);
@@ -119,26 +116,15 @@ const newCardFormValidator = new FormValidator(defaultFormConfig, newCardForm);
 newCardFormValidator.enableValidation();
 newCardFormValidator.resetValidation();
 // Cambio de foto de perfil
-const changeProfilePicture = new PopupWithForm('#change-profile-picture-popup', editPhotoForm, async (values) => {
+const changeProfilePicture = new PopupWithForm("#change-profile-picture-popup", editPhotoForm, async (values) => {
     const { name: avatar } = values;
     const request = await api.ProfilePictureRequest(avatar);
     userPicture.src = avatar;
 });
-editPhotoContainer.addEventListener('click', () => {
+editPhotoContainer.addEventListener("click", () => {
     changeProfilePicture.open();
 });
 changeProfilePicture.setEventListeners();
 const changeProfilePictureValidation = new FormValidator(defaultFormConfig, editPhotoForm);
 changeProfilePictureValidation.enableValidation();
 changeProfilePictureValidation.resetValidation();
-const prueba = async () => {
-    const res = await fetch('https://around-api.es.tripleten-services.com/v1/cards', {
-        headers: {
-            authorization: '25cd8390-a38b-4c26-9455-c3a4437cd5d2',
-            'Content-Type': 'application/json',
-        }
-    });
-    const data = await res.json();
-    console.log(data);
-};
-prueba();
