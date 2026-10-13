@@ -1,120 +1,138 @@
 import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { Main } from './components/Main/Main'
+import { Footer } from './components/Footer/Footer'
+import { Header } from './components/Header/Header'
+
+
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+      <div className="page__content">
+      < Header/>
+      < Main/>
+      < Footer/>
+      
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+    {/*Form del perfil*/}
+      <div className="popup" id="edit-popup">
+        <div className="popup__content">
+          <button
+            aria-label="Cerrar ventana emergente"
+            className="popup__close"
+            type="button"
+          ></button>
+          <h3 className="popup__title">Editar perfil</h3>
+          <form className="popup__form" id="edit-profile-form">
+            <input
+              className="popup__input popup__input_type_name"
+              name="name"
+              placeholder="Nombre"
+              type="text"
+              minLength={2}
+              maxLength={40}
+              required
+            />
+            <span className="popup__error popup__error_type_name"></span>
+            <input
+              className="popup__input popup__input_type_description"
+              name="description"
+              placeholder="Acerca de mí"
+              type="text"
+              required
+              minLength={2}
+              maxLength={200}
+            />
+            <span className="popup__error popup__error_type_description"></span>
+            <button className="button popup__button" type="submit">Guardar</button>
+          </form>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      </div>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
+      {/*Form de confirmacion de eliminador de tarjeta*/}
+      <div className="popup" id="delete-confirmation-popup">
+        <div className="popup__content popup__content-deletion-confirm">
+          <form className='popup__form'>
+          <button
+            aria-label="Cerrar ventana emergente"
+            className="popup__close"
+            type="submit"
+          ></button>
+          <h3 className="popup__title">¿Estas Seguro/a?</h3>
+            <button className="button popup__button" type="submit">Si</button>
+          </form>
+        </div>
+      </div>
+
+      {/*Form de cambio de foto de perfil*/}
+
+<div className="popup" id="change-profile-picture-popup">
+        <div className="popup__content">
+          <button
+            aria-label="Cerrar ventana emergente"
+            className="popup__close"
+            type="button"
+          ></button>
+          <h3 className="popup__title">Cambiar foto de perfil</h3>
+          <form className="popup__form" id="change-profile-picture-form">
+            <input
+              className="popup__input popup__input_type_name"
+              name="name"
+              placeholder="Enlace de la imagen"
+              type="text"
+              minLength={2}
+              required
+            />
+            <span className="popup__error popup__error_type_name"></span>
+            <button className="button popup__button" type="submit">Guardar</button>
+          </form>
+        </div>
+      </div>
+
+      {/*div del form de la nueva tarjeta*/}
+      <div className="popup" id="new-card-popup">
+        <div className="popup__content">
+          <button
+            aria-label="Cerrar ventana emergente"
+            className="popup__close"
+            type="button"
+          ></button>
+          <h3 className="popup__title">Nuevo lugar</h3>
+          <form className="popup__form" id="new-card-form">
+            <input
+              className="popup__input popup__input_type_card-name"
+              name="name"
+              placeholder="Título"
+              required
+              type="text"
+              minLength={2}
+              maxLength={30}
+            />
+            <span className="popup__error popup__error_type_name"></span>
+            <input
+              className="popup__input popup__input_type_url"
+              name="link"
+              placeholder="Enlace a la imagen"
+              required
+              type="url"
+            />
+            <span className="popup__error popup__error_type_link"></span>
+            <button className="button popup__button" type="submit" disabled>Crear</button>
+          </form>
+        </div>
+      </div>
+      <div className="popup" id="image-popup">
+        <div className="popup__content popup__content_content_image">
+          <button
+            aria-label="Cerrar ventana emergente"
+            className="popup__close"
+            type="button"
+          ></button>
+          <img alt="" className="popup__image" src="#" />
+          <p className="popup__caption"></p>
+        </div>
+      </div>
+    </div>
     </>
   )
 }
